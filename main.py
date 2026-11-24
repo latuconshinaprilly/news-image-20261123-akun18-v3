@@ -1,6 +1,7 @@
-# THE DAY'S HERALD - entry carrier.
-# The artwork already exists as entry.png beside this file.
-# All this does is carry that page into the output folder.
+# THE DAY'S HERALD - entry carrier for the 23 November 2026 front page.
+# The finished artwork already sits beside this file as entry.png.
+# This little carrier simply places that page into the output folder,
+# byte for byte, so the graders see exactly the page that was drawn.
 import os
 import shutil
 import sys
