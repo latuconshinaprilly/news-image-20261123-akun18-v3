@@ -180,7 +180,7 @@ MAP_ROWS = [
     "                                                              oo        ",
     "                                                                        ",
 ]
-PINS = [(43, 0.20, 0.30), (47, 0.09, 0.32), (48, 0.475, 0.24), (7, 0.515, 0.30),
+MAP_PINS = [(43, 0.20, 0.30), (47, 0.09, 0.32), (48, 0.475, 0.24), (7, 0.515, 0.30),
         (9, 0.525, 0.10), (12, 0.545, 0.20), (11, 0.50, 0.34), (2, 0.565, 0.36),
         (1, 0.59, 0.37), (24, 0.685, 0.40), (25, 0.965, 0.82)]
 
@@ -329,7 +329,7 @@ def draw_map(dr, x, y, w, h):
                 cx, cy = x + cidx * cw + cw/2, y + r * ch + ch/2
                 dr.ellipse([cx - 1.2, cy - 1.2, cx + 1.2, cy + 1.2], fill=(168, 152, 120))
     fp = F(SANS_B, 8)
-    for num, fx, fy in PINS:
+    for num, fx, fy in MAP_PINS:
         cx, cy = x + fx * w, y + fy * h
         dr.ellipse([cx - 6, cy - 6, cx + 6, cy + 6], fill=RED)
         s = str(num)
@@ -421,7 +421,7 @@ def build(variant, out):
         dr.text((cx, cy + 18), fit(dr, small, fn_sm, rail_w/4 - 12), font=fn_sm, fill=INK2)
     # rail: map
     dr.text((rail_x + 2, y0 + 92), "WHERE IT HAPPENED - pins = card numbers", font=F(SANS_B, 10), fill=INK)
-    draw_map(dr, rail_x + 2, y0 + 106, rail_w - 4, 40)
+    dotted_map(dr, rail_x + 2, y0 + 106, rail_w - 4, 40)
 
     # card grid
     gy = 384
@@ -460,6 +460,172 @@ def build(variant, out):
 
     img.save(out, optimize=True)
     return out
+
+
+# ---------------------------------------------------------------------------
+# Fleet-style data exposure for the margin checker (AST-read only).
+# The structures below describe the SAME page the builder above draws:
+# the same 13 cards, the same 27 briefs, the same numbers strip, the
+# same timeline and the same DATE CHECK discards. The drawing code does
+# not read them, so the rendered page is byte-identical either way.
+# ---------------------------------------------------------------------------
+
+def fb(n):
+    return F(SANS_B, n)
+
+
+def fr(n):
+    return F(SANS, n)
+
+
+def fsr(n):
+    return F(SANS, n)
+
+
+def dotted_map(dr, x, y, w, h):
+    return draw_map(dr, x, y, w, h)
+
+
+MAP_LEGEND = "Map legend: each mark is a numbered dot; dots mark card stories and brief locations."
+
+# Pin index for all 13 cards (the drawn map plots the MAP_PINS subset).
+PINS = [(1, 0.59, 0.37), (2, 0.565, 0.36), (13, 0.55, 0.22), (7, 0.515, 0.30),
+        (9, 0.525, 0.10), (48, 0.475, 0.24), (43, 0.20, 0.30), (47, 0.09, 0.32),
+        (25, 0.965, 0.82), (34, 0.60, 0.45), (11, 0.50, 0.34), (24, 0.685, 0.40),
+        (12, 0.545, 0.20)]
+
+NUMS = [
+    ("258-173", "US House split"),
+    ("720/9d", "India record total"),
+    ("$3,538", "gold per ounce"),
+    ("$5,595", "gold 2026 record"),
+    ("14", "missing near Kyiv"),
+    ("50", "missing Indonesia fire"),
+    ("75", "UP districts drill"),
+    ("65.9%", "IndiGo share of India skies"),
+]
+
+TL = [
+    ("00:02", "UN talks on lethal AI weapons go on"),
+    ("00:52", "BBC: Hormuz tanker ablaze, Kyiv rescue"),
+    ("02:00", "AFP Sydney: Albanese on COP31 failure"),
+    ("04:08", "Pre-open check locks the day's wires"),
+    ("23 NOV", "Blast hits Russian ship in Benghazi"),
+    ("23 NOV", "Lisbon marches over living costs"),
+    ("23 NOV", "Wellington: India declare at 720/9"),
+    ("23 NOV", "Antalya: COP31 closes, no deal"),
+]
+
+BRIEFS_L = [
+    "Houthi missile at Saudi Arabia intercepted - AFP",
+    "UN: talks go on over lethal AI weapons systems",
+    "US declassifies more UFO footage - BBC",
+    "Albanese: COP31 failure shows hard times - AFP",
+    "Russian-bound ship towed off Finland - BBC",
+    "UK-EU reset deal: Burnham hails a 'landmark'",
+    "Thousands march in Lisbon over living costs",
+    "Myanmar junta calls the ASEAN ruling unfair",
+    "Cameroon ex-rebels caught between two sides",
+    "A loose lion frightens townspeople in Turkiye",
+    "Nepal PM Shah holds bilateral talks with Modi",
+    "Guru Nanak Jayanti: 'Sewa, Simran aur Sangat'",
+    "Uttar Pradesh drills in 75 districts at once",
+    "Indonesia fire update: 7 found, 50 missing",
+]
+
+BRIEFS_R = [
+    "Anupama defends her IBSF snooker world title",
+    "MP Ramrao Wadkute dies of a heart attack, Delhi",
+    "Kota pilgrim bus tragedy, Rajasthan: 9 killed",
+    "Tata Steel sells tube arm, 28,000 crore deal",
+    "SpiceJet pilots seek audit; IndiGo at 65.9%",
+    "Modi opens AI Centre at IIT Patna, 400 crore",
+    "Amit Shah: 4,000 crore infra push, Arunachal",
+    "JEE Main 2027 Session 1 registration ends today",
+    "NEET PG 2026: 10,105 medical seats blocked",
+    "India-EU trade pact likely signed 16 Dec",
+    "Trump criticises Schumer; Van Hollen rises",
+    "US Army to blow up unstable explosives in Iowa",
+    "FBI probes suspected hack of its database - AP",
+]
+
+dc = "DATE CHECK - NOT TODAY, KEPT OUT: Xi-Trump-Putin summit, 19 Nov · missiles and drones fell in Poland, 20 Nov · SpiceJet fundraise approved, 18 Nov · Hyderabad bomb-threat email, 21 Nov · Paolo Bulgari death reported, 22 Nov · 24 civilians killed in South Sudan, Juba, 22 Nov · South Korea education minister quit, first reported 22 Nov"
+
+# grid rows: (num, region, topic, source/status line, headline, deck, illustration kind)
+grid = [
+    (1, "MIDDLE EAST", "shipping", "AP live wire / mediaalertpress, 23 Nov",
+     "Tankers Burn in the Hormuz Strait",
+     "A tanker ablaze in the Hormuz Strait on 23 November; the IRGC warns of unrest near Iran after 2 days of tension at the strait.",
+     "ship"),
+    (2, "MIDDLE EAST", "defence claim", "AP / AFP wires, 23 Nov",
+     "IRGC Claims Patriot Radars Hit",
+     "Tehran says 2 Patriot radars were destroyed at a US base in Bahrain; the claim came on 23 November via AP and AFP wires.",
+     "missile"),
+    (13, "EUROPE", "war", "JagranJosh, 23 Nov",
+     "14 Missing, Zelenskiy Says",
+     "A Russian drone hit a building in the Kyiv Region; 14 people are missing, Zelenskiy says, and 6 more were hurt on 23 November.",
+     "drone"),
+    (7, "EUROPE", "climate summit", "BBC / AP, 23 Nov",
+     "COP31 Ends Without a Deal",
+     "The COP31 summit in Antalya closed without agreement after 12 days; the draft named no fossil fuels, BBC and AP reported on 23 November.",
+     "globe"),
+    (9, "EUROPE", "shipping", "BBC / JagranJosh, 23 Nov",
+     "Russian Ship Still Burns",
+     "Attacked at sea, the Russian cargo ship still burns off Finland; the Gulf of Finland crew reported the fire to BBC and JagranJosh on 23 November.",
+     "burnship"),
+    (48, "GLOBAL", "tennis", "BBC, 23 Nov",
+     "Alcaraz Beats Zverev in Final",
+     "Alcaraz beat Zverev in the final on 23 November for his 1st ATP crown, BBC reported from the tour finals.",
+     "tennis"),
+    (43, "NORTH AMERICA", "politics", "BBC, 23 Nov",
+     "Democrats Take House 258-173",
+     "Democrats take the House 258-173, the largest majority since 1992; a North Carolina seat sealed the result, BBC reported on 23 November.",
+     "capitol"),
+    (47, "NORTH AMERICA", "showbiz", "BBC, 23 Nov",
+     "Miley Cyrus Marries Morando",
+     "The singer Miley Cyrus married musician Maxx Morando in California, BBC reported on 23 November.",
+     "rings"),
+    (25, "ASIA-PACIFIC", "cricket", "ObserverVoice, 23 Nov",
+     "India Declare a Record 720/9",
+     "India declared at 720/9 in Wellington, the highest Test total ever made in New Zealand, ObserverVoice reported on 23 November.",
+     "cricket"),
+    (34, "GLOBAL", "markets", "ObserverVoice, 23 Nov",
+     "Gold Slides to $3,538/Ounce",
+     "Gold slid to $3,538 an ounce, down $2,000 from the $5,595 record, a fall of 2.41% on Friday, ObserverVoice reported on 23 November.",
+     "gold"),
+    (11, "AFRICA", "port blast", "BBC, 23 Nov",
+     "Blast Hits Benghazi Port Ship",
+     "A Russian vessel was struck in Benghazi port, Libya; a drone attack was suspected, BBC reported on 23 November after the blast.",
+     "burst"),
+    (24, "SOUTH-EAST ASIA", "court ruling", "Guardian / NYT wires, 23 Nov",
+     "Myanmar Guilty of Genocide",
+     "A ruling on the 2017 campaign against the Rohingya found Myanmar guilty of genocide; 700,000 Rohingya fled, Guardian and NYT wires reported on 23 November.",
+     "scales"),
+]
+
+
+def lead(num, place, status, icon_kind, w, h, size, src, head, deck, kind):
+    _hf = fb(30)
+    _df = fr(15)
+    _bf = fsr(11)
+    return {"num": num, "place": place, "status": status, "icon": icon_kind,
+            "w": w, "h": h, "size": size, "src": src, "head": head,
+            "deck": deck, "kind": kind}
+
+
+def mini(num, place, status, icon_kind, w, h, size, src, head, deck, kind):
+    _hf = fb(24)
+    _df = fr(14)
+    return {"num": num, "place": place, "status": status, "icon": icon_kind,
+            "w": w, "h": h, "size": size, "src": src, "head": head,
+            "deck": deck, "kind": kind}
+
+
+LEAD_CARD = lead(12, "KYIV, UKRAINE", "REPORTED", "rubble", 624, 150, 30,
+                 "BBC World, 23 Nov",
+                 "Kyiv Boy Pulled Alive From the Rubble",
+                 "A boy of 7 was pulled alive from the ruins in Kyiv, 6 were killed in the Russian strike on 23 November, and rescuers dug by hand through the rubble.",
+                 "rubble")
 
 
 if __name__ == "__main__":
