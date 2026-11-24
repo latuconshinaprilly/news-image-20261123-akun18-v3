@@ -1,75 +1,73 @@
 #!/usr/bin/env python3
-"""THE UNIVERSAL LEDGER — entry program for news-image-20261123 (akun18).
+"""Deliver THE UNIVERSAL LEDGER front page (akun18, NI23 G3).
 
-The artwork is a one-page newspaper front, "THE UNIVERSAL LEDGER",
-summing up Monday 23 November 2026 in 40 stories across 7 regions,
-led by Tata Steel's Rs 28,000 crore pipe-business sale to APL Apollo.
+The picture next to this file is a complete newspaper front page for
+Monday 23 November 2026: forty stories, seven regions, one dotted
+world map, and Tata Steel's Rs 28,000 crore pipe sale in the lead
+slot. This script's only job is to hand that picture to the grader
+untouched. It pins the picture down with a byte count and a SHA-256
+digest, copies it into MAKEFUN_OUTPUT_DIR (or /output), and reads
+the copy back to prove nothing changed on the way.
 
-This program is deliberately boring: it copies the bundled entry.png
-to the output directory and refuses to run if the file does not match
-the exact byte count and SHA-256 recorded below. Standard library
-only (hashlib / os / sys); no imaging code runs here.
+Standard library only: hashlib, os, sys. No image processing.
 """
 
 import hashlib
 import os
 import sys
 
-EXPECTED_BYTES = 273287
-EXPECTED_SHA256 = "667d940bb52c9e866799c01b4b1f9707ffbe7cb3d1dace12144f6c246f036dd3"
-PNG_HEADER = b"\x89PNG\r\n\x1a\n"
-HARD_CAP = 1048576  # competition ceiling: 1 MiB
+WANT_BYTES = 273287
+WANT_SHA256 = "667d940bb52c9e866799c01b4b1f9707ffbe7cb3d1dace12144f6c246f036dd3"
+MAGIC = b"\x89PNG\r\n\x1a\n"
+LIMIT = 1048576
 
 
-def load_entry():
-    folder = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(folder, "entry.png")
-    with open(path, "rb") as fh:
+def read_source():
+    here = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(here, "entry.png"), "rb") as fh:
         return fh.read()
 
 
-def check_payload(blob):
-    if not blob:
-        raise SystemExit("entry.png is empty")
-    if blob[:8] != PNG_HEADER:
-        raise SystemExit("entry.png lacks the PNG magic header")
-    if len(blob) > HARD_CAP:
-        raise SystemExit("entry.png exceeds the 1 MiB cap: %d" % len(blob))
-    if len(blob) != EXPECTED_BYTES:
-        raise SystemExit(
-            "entry.png size drifted: %d bytes, expected %d"
-            % (len(blob), EXPECTED_BYTES)
-        )
-    digest = hashlib.sha256(blob).hexdigest()
-    if digest != EXPECTED_SHA256:
-        raise SystemExit("entry.png sha256 mismatch: %s" % digest)
-    return digest
+def insist_valid(blob):
+    problems = []
+    if len(blob) == 0:
+        problems.append("file is empty")
+    if blob[:8] != MAGIC:
+        problems.append("PNG magic header missing")
+    if len(blob) > LIMIT:
+        problems.append("file over the 1 MiB limit")
+    if len(blob) != WANT_BYTES:
+        problems.append("size %d != pinned %d" % (len(blob), WANT_BYTES))
+    if hashlib.sha256(blob).hexdigest() != WANT_SHA256:
+        problems.append("sha256 differs from the pinned digest")
+    if problems:
+        raise SystemExit("entry.png rejected: " + "; ".join(problems))
 
 
-def verify_written(target, blob):
-    """Re-read the copied file and confirm it is byte-identical."""
-    with open(target, "rb") as fh:
-        back = fh.read()
-    if back != blob:
-        raise SystemExit("written copy differs from the bundled entry.png")
-    if hashlib.sha256(back).hexdigest() != EXPECTED_SHA256:
-        raise SystemExit("written copy fails the sha256 check")
+def confirm_copy(out_path, blob):
+    """Second, independent check: the file on disk must equal the source."""
+    with open(out_path, "rb") as fh:
+        landed = fh.read()
+    if landed != blob:
+        raise SystemExit("copy verification failed: bytes differ after write")
+    if hashlib.sha256(landed).hexdigest() != WANT_SHA256:
+        raise SystemExit("copy verification failed: digest differs after write")
 
 
-def main():
-    blob = load_entry()
-    digest = check_payload(blob)
-    target_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
-    os.makedirs(target_dir, exist_ok=True)
-    target = os.path.join(target_dir, "entry.png")
-    with open(target, "wb") as fh:
+def run():
+    blob = read_source()
+    insist_valid(blob)
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "entry.png")
+    with open(out_path, "wb") as fh:
         fh.write(blob)
-    verify_written(target, blob)
+    confirm_copy(out_path, blob)
     sys.stderr.write(
-        "THE UNIVERSAL LEDGER entry.png written: %d bytes sha256=%s\n"
-        % (len(blob), digest)
+        "copied entry.png (%d bytes, sha256 %s)\n"
+        % (len(blob), WANT_SHA256)
     )
 
 
 if __name__ == "__main__":
-    main()
+    run()
