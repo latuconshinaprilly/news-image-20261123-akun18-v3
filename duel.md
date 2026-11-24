@@ -1,41 +1,49 @@
-# DUEL VARIAN — NI23 G3 akun18 · THE UNIVERSAL LEDGER
+# DUEL — NI23 G4 · Akun 18 · THE DAY'S HERALD
+Senin 23 November 2026 · staging build-only (ekor oleh koordinator)
 
-Tiga varian dirender dari compose.py yang sama (argumen A/B/C):
+## Duel A vs B (arsitektur sama, tata letak/kepadatan beda)
+- A: grid 3 kolom × 4 baris, judul kartu 24px, fakta 14px, lead di kiri,
+  rel kanan = THE DAY IN NUMBERS di atas peta titik.
+  Ukuran berkas: 220.182 byte.
+- B: grid 4 kolom × 3 baris, judul kartu 20px, fakta 13px, lead di kanan,
+  rel angka/peta di kiri. Ukuran berkas: 197.176 byte.
+- Uji 300×300: di A judul kartu tetap terbaca sebagai kata utuh
+  (±7px tinggi huruf), lead terbaca penuh; di B judul menyusut
+  (±6px), beberapa fakta terpotong baris, kartu terasa sesak.
+- Uji fakta silang: kedua varian memakai angka yang sama dari pool;
+  pemeriksaan wrap otomatis A: 0 judul/fakta terpotong.
+- PEMENANG: A — lebih terbaca di 300px (kriteria utama). B lebih kecil
+  tetapi kalah keterbacaan, jadi aturan seri tidak berlaku.
 
-- **A — krem + ungu anggur:** latar krem #F7F1DE, tinta hitam, aksen ungu
-  anggur #5B2A6E, kartu krem terang, strip ikon krem tua.
-- **B — putih + oxblood:** latar putih kertas, aksen merah oxblood,
-  kartu putih murni.
-- **C — perkamen + teal:** latar perkamen lebih kuning, aksen teal,
-  kartu krem kehijauan.
+## Gerbang Tembak Pengganti — A vs entry berdiri G3
+Lawan: G3 "THE UNIVERSAL LEDGER", 292.128 byte, sha d16c1271…,
+13 kartu, palet putih+hitam+biru baja (data dari brief koordinator;
+repo G3 tidak dibuka — jalur ekor paralel).
 
-## Penilaian
-- Kontras: A tertinggi (ungu anggur di atas krem membaca paling tegas,
-  masthead hitam pekat). B bersih tapi aksen merahnya bersaing dengan
-  kotak DATE CHECK merah. C paling lembut, chip region kurang tegas.
-- Keterbacaan 300px: ketiganya lulus struktur yang sama; A paling jelas
-  karena aksennya paling gelap. Uji 300px pada pemenang (A): masthead
-  "THE UNIVERSAL LEDGER", tanggal "Monday 23 November 2026", dan judul
-  ke-13 kartu utama semuanya masih terbaca di
-  /tmp/ni23g3-akun18-300.png — LULUS.
-- Kepadatan data: sama di ketiganya (40 cerita, 8 angka, 6 slot UTC,
-  7 buangan DATE CHECK bernama + bertanggal).
+| Sumbu | G3 berdiri | A (THE DAY'S HERALD) |
+|---|---|---|
+| Keterbacaan | 13 kartu palet hitam/biru baja | 13 kartu, judul 24px, lead 30px dua baris utuh, fakta 14px tanpa potongan (terverifikasi wrap) |
+| Perabot lengkap | per brief: 13 kartu | kicker jujur + masthead 56px + tanggal 36px + strip angka pool + strip 8 region berjumlah (total 40) + timeline 8 slot + DAY IN NUMBERS 8 angka + peta pin bernomor (= nomor kartu) + ALSO ON 27 + DATE CHECK 7 buangan bernama/bertanggal + footer HOW SURE 3 baris |
+| Kesetiaan | — | klaim dibingkai di judul ("IRGC Claims…", "14 Missing, Zelenskiy Says", kapal "still burns / has not sunk"); nol angka di luar pool; DATE CHECK tidak bertabrakan dengan kartu mana pun (SpiceJet di ALSO = panggilan audit 23 Nov, buangan DATE CHECK = fundraise 18 Nov — dua peristiwa berbeda) |
+| Keluasan | 13 kartu | 13 kartu + 27 ALSO ON = 40 cerita, 8 region (Eropa 10, Asia Selatan 13, Amerika Utara 6, Timur Tengah 3, Asia Tenggara 3, Afrika 2, Global 2, Asia-Pasifik 1 — jumlah strip = isi) |
+| Ukuran | 292.128 byte | 220.182 byte (lebih ramping 71.946 byte — seri pun jatuh ke A) |
 
-**Pemenang: A** — palet rumah akun (krem · tinta hitam · ungu anggur),
-kontras terbaik, dan tidak bertabrakan warna dengan DATE CHECK.
+VONIS: LEBIH KUAT. A menang di keterbacaan, kelengkapan perabot,
+kesetiaan (bingkai klaim + nol kontradiksi DATE CHECK), keluasan
+terukur, dan ukuran berkas. Tidak perlu varian C.
 
-## Trio lead
-Lead akun #32 (Tata Steel Rs 28,000 crore) sebagai kartu No 1 terbesar,
-ditambah dua pilihan sendiri: #43 Demokrat rebut DPR 258-173 (kartu No 2)
-dan #12 anak 7 tahun selamat dari reruntuhan Kyiv (kartu No 3).
+## Catatan penyimpangan terpaksa (pool = satu-satunya sumber fakta)
+- Pool tidak memuat harga Bitcoin/minyak dan tidak memuat cuaca kota;
+  strip atas diisi angka pool saja (emas $3.538/rekor $5.595, IndiGo
+  65,9%, barometer pasar dari kabel AP pool) — tidak ada angka karangan.
+- Trio Kyiv memakai fakta pool: kartu lead #12 (anak 7 tahun selamat,
+  6 tewas) dan #13 (14 hilang, kata Zelenskiy). Angka "15 tewas/11
+  Dymer" di brief tidak ada di pool, jadi tidak dipakai.
+- Timeline: jam yang dicetak hanya yang ada di pool (00:02, 00:52,
+  02:00, 04:08); slot lain ditandai "23 NOV" — tidak ada jam karangan.
 
-## Kenapa lebih kuat dari G2
-Entry G2 akun ini berkonsep "Etalase Roti" — etalase dekoratif, bukan
-bentuk koran. Pemenang G3 adalah halaman depan koran sungguhan: masthead
-raksasa + tanggal besar, kicker hitungan jujur, strip 8 angka yang
-mengikat kartu, 13 kartu utama berilustrasi gambar-sendiri dengan tag
-sumber 100%, peta dunia titik-titik gambar-sendiri dengan pin bernomor,
-timeline UTC 6 slot, ALSO ON sampai 40 cerita, dan kotak DATE CHECK
-merah berisi 7 buangan bernama + bertanggal. Margin checker: 13/13.
-entry.png 1024x1024 (IHDR terverifikasi), 273.287 byte, sha256
-667d940bb52c9e866799c01b4b1f9707ffbe7cb3d1dace12144f6c246f036dd3.
+## Hasil akhir
+- entry.png: 220.182 byte · sha256 54b89feb4caee994b2890b665be2e879fe1d0dc46d93b14cae4e5f87cb84791e · PNG 1024×1024 (IHDR terverifikasi)
+- test_entry.py: PASS (ukuran ≤1.048.576, IHDR 1024×1024, 30 kata segar hadir)
+- Hash jangkar: 3bc96e38a697045dd709ba7f26c75d99c69e7de8
+- Hash commit build: 0901adf1c49ce9aac8deae1dbab66c4e82a9257a
